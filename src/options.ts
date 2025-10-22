@@ -16,13 +16,24 @@ const setLabels = (f: number, s: number) => {
     if (slowLabel) slowLabel.textContent = fmt(s);
 };
 
-fastSlider?.addEventListener("input", () => {
-    setLabels(Number(fastSlider.value), Number(slowSlider?.value ?? DEFAULTS.slowSpeed));
-});
+const resetToDefaults = () => {
+    //reset the the slowLabel & fastLabel to DEFAULTS
+    if ( fastSlider ) fastSlider.value = String(DEFAULTS.fastSpeed);
+    if ( slowSlider ) slowSlider.value = String(DEFAULTS.slowSpeed);
+    setLabels(DEFAULTS.fastSpeed, DEFAULTS.slowSpeed);
 
-slowSlider?.addEventListener("input", () => {
-    setLabels(Number(fastSlider?.value ?? DEFAULTS.fastSpeed),Number(slowSlider.value))
-})
+    chrome.storage.sync.set({
+        fastSpeed: DEFAULTS.fastSpeed,
+        slowSpeed: DEFAULTS.slowSpeed
+    })
+    console.log("reset clicked!")
+}
+
+
+fastSlider?.addEventListener("input", () => {setLabels(Number(fastSlider.value), Number(slowSlider?.value ?? DEFAULTS.slowSpeed));});
+slowSlider?.addEventListener("input", () => {setLabels(Number(fastSlider?.value ?? DEFAULTS.fastSpeed), Number(slowSlider.value));});
+resetBtn?.addEventListener("click", () => {resetToDefaults()});
+
 
 
 
