@@ -1,5 +1,5 @@
 // Slowdown Bar
-import "/src/style.css";
+import "./style.css";
 
 type Speeds = { fastSpeed: number; slowSpeed: number };
 const DEFAULTS: Speeds = { fastSpeed: 2.0, slowSpeed: 1.0 };

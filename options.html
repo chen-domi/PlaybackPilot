@@ -4,14 +4,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="/src/style.css" rel="stylesheet" />
+  <!-- <link href="/src/style.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" href="dist/assets/options.css" />
+
   <title>Slowdown Bar</title>
 </head>
 
-<body>
-  <!-- <div id="app"></div> -->
+<body class="w-[400px] h-[500px] overflow-hidden bg-[#0f0f10]">
   <div class="flex items-start justify-center bg-[#0f0f10] py-12 px-8 rounded-2xl">
-    <div class="w-[360px]">
+    <div class="w-[]">
       <h1 class="text-center text-3xl font-extrabold text-white">Slowdown Bar</h1>
       <p class="text-center text-lg text-gray-400 mt-2">Hold spacebar to control playback speed</p>
 
@@ -72,7 +73,9 @@
     </div>
   </div>
   <!-- <script type="module" src="/src/options.ts"></script> -->
-   <script src="/dist/options.js"></script>
+  <script src="dist/options.js"></script>
+
+
 </body>
 
 </html>

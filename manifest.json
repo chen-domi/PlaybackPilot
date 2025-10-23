@@ -3,14 +3,21 @@
   "name": "Slowdown Bar",
   "version": "0.1.0",
   "description": "Hold Space to temporarily slow YouTube playback.",
+  "permissions": ["storage"],
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*", "https://www.youtube.com/embed/*"],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.youtube.com/embed/*"
+      ],
       "js": ["dist/content.js"],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
   "options_page": "options.html",
-  "permissions": ["storage"]
+  "action": {
+    "default_title": "Slowdown Bar",
+    "default_popup": "options.html"
+  }
 }
