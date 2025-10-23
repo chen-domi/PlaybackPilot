@@ -15,7 +15,6 @@
       "all_frames": true
     }
   ],
-  "options_page": "options.html",
   "action": {
     "default_title": "Slowdown Bar",
     "default_popup": "options.html"
