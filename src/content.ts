@@ -1,97 +1,92 @@
-// Spacebar functionality
+type SpeedSettings = { fastSpeed: number; slowSpeed: number };
 
-// import { FSWatcher } from "vite";
+const DEFAULT_SPEEDS: SpeedSettings = { fastSpeed: 2.0, slowSpeed: 1.0 };
 
-type Speeds = { fastSpeed: number; slowSpeed: number };
-
-declare global {
-    interface WindowEventMap {
-        "yt-navigate-finish": Event;
-    }
-}
-
-const DEFAULTS: Speeds = { fastSpeed: 2.0, slowSpeed: 1.0 };
-
-let speedSettings: Speeds = { ...DEFAULTS };
+let speeds: SpeedSettings = { ...DEFAULT_SPEEDS };
 let currentVideo: HTMLVideoElement | null = null;
-let isHoldingSpace = false; // space bar held down? Y/N
-let wasPausedBeforeHold = false;
+let spaceHeld = false;
 
-
-//Load saved speeds from chrome storage (options.ts)
-const localSettings = async () => {
-    const stored = await chrome.storage.sync.get(["fastSpeed", "slowSpeed"]);
-
-    speedSettings = {
-        fastSpeed: stored.fastSpeed > 0 ? stored.fastSpeed : DEFAULTS.fastSpeed,
-        slowSpeed: stored.slowSpeed > 0 ? stored.slowSpeed : DEFAULTS.slowSpeed,
-    };
+// Return <video> (and update our reference)
+const getVideo = (): HTMLVideoElement | null => {
+    const v = document.querySelector("video") as HTMLVideoElement | null;
+    if (v !== currentVideo) currentVideo = v;
+    return currentVideo;
 };
 
-//---- Video Logic ----
+// Change playback rate if a video exists
+const setRate = (rate: number): void => {
+    const v = getVideo();
+    if (v) v.playbackRate = rate;
+};
 
-//listen for settings updates
+const isTyping = (el: Element | null): boolean => {
+    if (!el) return false;
+    const tag = el.tagName.toLowerCase();
+    return (
+        tag === "input" ||
+        tag === "textarea" ||
+        (el as HTMLElement).isContentEditable
+    );
+};
+
+// --- Load & Watch Settings ---
+
+chrome.storage.sync.get(["fastSpeed", "slowSpeed"], (data) => {
+    speeds = {
+        fastSpeed:
+            typeof data.fastSpeed === "number" && data.fastSpeed > 0 ? data.fastSpeed : DEFAULT_SPEEDS.fastSpeed,
+        slowSpeed:
+            typeof data.slowSpeed === "number" && data.slowSpeed > 0 ? data.slowSpeed : DEFAULT_SPEEDS.slowSpeed,
+    };
+    if (!spaceHeld) setRate(speeds.fastSpeed);
+});
+
 chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "sync") return;
-    if (changes.fastSpeed) speedSettings.fastSpeed = Number(changes.fastSpeed.newValue) || DEFAULTS.fastSpeed;
-    if (changes.slowSpeed) speedSettings.slowSpeed = Number(changes.slowSpeed.newValue) || DEFAULTS.slowSpeed;
-    if (!isHoldingSpace) setPlaybackRate(speedSettings.fastSpeed);
+    if (changes.fastSpeed) {
+        const v = Number(changes.fastSpeed.newValue);
+        if (v > 0) speeds.fastSpeed = v;
+    }
+    if (changes.slowSpeed) {
+        const v = Number(changes.slowSpeed.newValue);
+        if (v > 0) speeds.slowSpeed = v;
+    }
+    if (!spaceHeld) setRate(speeds.fastSpeed);
 });
 
-const findActiveVideo = (): HTMLVideoElement | null  => document.querySelector("video")
+// --- Keyboard: hold = slow, release = fast ---
 
-const updateVideoRef = (): void => {
-    const found = findActiveVideo();
-    if (found !== currentVideo) currentVideo = found;
+const onKeyDown = (e: KeyboardEvent): void => {
+    if (e.code !== "Space" && e.key !== " ") return;
+    if (isTyping(document.activeElement)) return;
 
-    setPlaybackRate(isHoldingSpace ? speedSettings.slowSpeed : speedSettings.fastSpeed);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    if (spaceHeld || e.repeat) return;
+    spaceHeld = true;
+    setRate(speeds.slowSpeed);
 };
 
-const setPlaybackRate = (rate: number): void => {
-    if (currentVideo) currentVideo.playbackRate = rate;
-}
+const onKeyUp = (e: KeyboardEvent): void => {
+    if (e.code !== "Space" && e.key !== " ") return;
+    if (isTyping(document.activeElement)) return;
 
-// ---- Video Check & Spacebar Logic ----
+    e.preventDefault();
+    e.stopImmediatePropagation();
 
-const ensureVideoReady = (): HTMLVideoElement | null => {
-    const vid = findActiveVideo();
-    if (!vid) {
-        console.log("No video found on this page.");
-        return null;
-    }
-    currentVideo = vid;
-    return vid;
-}
-
-const handleSpacebar = (isPressed: boolean): void => {
-    const vid = ensureVideoReady();
-    if (!vid) return;
-
-    if (isPressed) {
-        wasPausedBeforeHold = vid.paused;
-        if (wasPausedBeforeHold) vid.play();
-        vid.playbackRate = speedSettings.slowSpeed;
-    } else {
-        vid.playbackRate = speedSettings.fastSpeed;
-        if (wasPausedBeforeHold) {
-            vid.pause();
-            wasPausedBeforeHold = false;
-        }
-    }
+    spaceHeld = false;
+    setRate(speeds.fastSpeed);
 };
 
-window.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-        e.preventDefault();
-        if (!isHoldingSpace) return;
-        isHoldingSpace = false;
-        handleSpacebar(false);
-    }
-});
+window.addEventListener("keydown", onKeyDown, true);
+window.addEventListener("keyup", onKeyUp, true);
 
-(async () => {
-    await localSettings();
-    updateVideoRef();
-    setPlaybackRate(speedSettings.fastSpeed)
-})
 
+new MutationObserver(() => {
+    getVideo();
+    if (!spaceHeld) setRate(speeds.fastSpeed);
+}).observe(document.documentElement, { childList: true, subtree: true });
+
+
+setRate(speeds.fastSpeed);
