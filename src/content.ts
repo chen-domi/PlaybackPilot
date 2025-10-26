@@ -1,10 +1,20 @@
-type SpeedSettings = { fastSpeed: number; slowSpeed: number };
+type SpeedSettings = {
+    fastSpeed: number;
+    slowSpeed: number;
+    enabled?: boolean;
+};
 
-const DEFAULT_SPEEDS: SpeedSettings = { fastSpeed: 2.0, slowSpeed: 1.0 };
+const DEFAULT_SPEEDS: SpeedSettings = {
+    fastSpeed: 2.0,
+    slowSpeed: 1.0,
+    enabled: true,
+};
 
 let speeds: SpeedSettings = { ...DEFAULT_SPEEDS };
 let currentVideo: HTMLVideoElement | null = null;
 let spaceHeld = false;
+let pressStart = 0;
+const HOLD_THRESHOLD_MS = 180;
 
 // Return <video> (and update our reference)
 const getVideo = (): HTMLVideoElement | null => {
@@ -34,9 +44,17 @@ const isTyping = (el: Element | null): boolean => {
 chrome.storage.sync.get(["fastSpeed", "slowSpeed"], (data) => {
     speeds = {
         fastSpeed:
-            typeof data.fastSpeed === "number" && data.fastSpeed > 0 ? data.fastSpeed : DEFAULT_SPEEDS.fastSpeed,
+            typeof data.fastSpeed === "number" && data.fastSpeed > 0
+                ? data.fastSpeed
+                : DEFAULT_SPEEDS.fastSpeed,
         slowSpeed:
-            typeof data.slowSpeed === "number" && data.slowSpeed > 0 ? data.slowSpeed : DEFAULT_SPEEDS.slowSpeed,
+            typeof data.slowSpeed === "number" && data.slowSpeed > 0
+                ? data.slowSpeed
+                : DEFAULT_SPEEDS.slowSpeed,
+        enabled:
+            typeof data.enabled === "boolean"
+                ? data.enabled
+                : DEFAULT_SPEEDS.enabled,
     };
     if (!spaceHeld) setRate(speeds.fastSpeed);
 });
@@ -51,13 +69,19 @@ chrome.storage.onChanged.addListener((changes, area) => {
         const v = Number(changes.slowSpeed.newValue);
         if (v > 0) speeds.slowSpeed = v;
     }
-    if (!spaceHeld) setRate(speeds.fastSpeed);
+    if (typeof changes.enabled?.newValue === "boolean") {
+        speeds.enabled = changes.enabled.newValue;
+    }
+    if (speeds.enabled && !spaceHeld) setRate(speeds.fastSpeed);
 });
 
 // --- Keyboard: hold = slow, release = fast ---
 
-const onKeyDown = (e: KeyboardEvent): void => {
+window.addEventListener(
+  "keydown",
+  (e) => {
     if (e.code !== "Space" && e.key !== " ") return;
+    if (!speeds.enabled) return;
     if (isTyping(document.activeElement)) return;
 
     e.preventDefault();
@@ -65,28 +89,66 @@ const onKeyDown = (e: KeyboardEvent): void => {
 
     if (spaceHeld || e.repeat) return;
     spaceHeld = true;
-    setRate(speeds.slowSpeed);
-};
+    pressStart = performance.now();
+  },
+  true
+);
 
-const onKeyUp = (e: KeyboardEvent): void => {
+window.addEventListener(
+  "keyup",
+  (e) => {
     if (e.code !== "Space" && e.key !== " ") return;
+    if (!speeds.enabled) return;
     if (isTyping(document.activeElement)) return;
 
     e.preventDefault();
     e.stopImmediatePropagation();
 
+    const elapsed = performance.now() - pressStart;
+    const v = getVideo();
+
+    if (!v) {
+      spaceHeld = false;
+      return;
+    }
+
+    if (elapsed < HOLD_THRESHOLD_MS) {
+      if (v.paused) {
+        v.play();
+        setRate(speeds.fastSpeed);
+      } else {
+        v.pause();
+      }
+    } else {
+
+      setRate(speeds.fastSpeed);
+    }
+
     spaceHeld = false;
-    setRate(speeds.fastSpeed);
-};
+  },
+  true
+);
 
-window.addEventListener("keydown", onKeyDown, true);
-window.addEventListener("keyup", onKeyUp, true);
+let holdTimer: number | undefined;
+window.addEventListener(
+  "keydown",
+  (e) => {
+    if (e.code !== "Space" && e.key !== " ") return;
+    if (!speeds.enabled || isTyping(document.activeElement)) return;
 
+    if (holdTimer) clearTimeout(holdTimer);
+    holdTimer = window.setTimeout(() => {
+      if (!spaceHeld) return;
+      setRate(speeds.slowSpeed);
+    }, HOLD_THRESHOLD_MS);
+  },
+  true
+);
 
 new MutationObserver(() => {
-    getVideo();
-    if (!spaceHeld) setRate(speeds.fastSpeed);
+  getVideo();
+  if (speeds.enabled && !spaceHeld) setRate(speeds.fastSpeed);
 }).observe(document.documentElement, { childList: true, subtree: true });
 
+if (speeds.enabled) setRate(speeds.fastSpeed);
 
-setRate(speeds.fastSpeed);
