@@ -2,8 +2,8 @@ Slowdown Bar
 A browser extension that lets you control video playback speed by holding the spacebar.
 Features
 
-Set a Default Speed for normal video playback (0.25x - 3.0x)
-Set a Spacebar Speed for when you hold the spacebar (0.25x - 2.0x)
+Set a Default Speed for normal video playback (0.25x - 4.0x)
+Set a Spacebar Speed for when you hold the spacebar (0.25x - 4.0x)
 Instantly switch between speeds with a simple spacebar hold
 Works on most video streaming platforms
 
@@ -12,7 +12,6 @@ Works on most video streaming platforms
 Video plays at Default Speed - Your videos play at your configured default speed
 Hold spacebar → switches to Spacebar Speed - Instantly slow down or speed up
 Release spacebar → returns to Default Speed - Immediately returns to normal playback
-If paused: Spacebar plays at reduced speed, release pauses - Control frame-by-frame playback
 
 ## Use Cases
 
@@ -36,8 +35,7 @@ HTML/CSS with Tailwind CSS
 TypeScript
 Vite
 
-License
-MIT
 
 
-<img width="424" height="841" alt="image" src="https://github.com/user-attachments/assets/06978c38-d289-4611-a7a2-f67a99785e65" />
+<img width="399" height="598" alt="image" src="https://github.com/user-attachments/assets/fd5bc821-45a1-4ef4-b0ae-c93df18b6f1b" />
+
