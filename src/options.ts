@@ -3,14 +3,14 @@ import "./style.css";
 type Speeds = { fastSpeed: number; slowSpeed: number };
 
 // Default values
-const DEFAULTS: Speeds = { fastSpeed: 1.0, slowSpeed: 1.0 };
+const DEFAULTS: Speeds = { fastSpeed: 1.0, slowSpeed: 2.0 };
 
 // HTML element references
 const fastSlider = document.getElementById("fast-slider") as HTMLInputElement | null;
 const slowSlider = document.getElementById("slow-slider") as HTMLInputElement | null;
 const fastLabel = document.getElementById("fast-label") as HTMLElement | null;
 const slowLabel = document.getElementById("slow-label") as HTMLElement | null;
-const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
+// const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
 const resetBtn = document.getElementById("reset-btn") as HTMLButtonElement | null;
 // const enableToggle = document.getElementById("enable-toggle") as HTMLInputElement | null;
 
@@ -20,13 +20,6 @@ const updateLabels = (): void => {
   if (fastLabel && fastSlider) fastLabel.textContent = fmt(Number(fastSlider.value));
   if (slowLabel && slowSlider) slowLabel.textContent = fmt(Number(slowSlider.value));
 };
-
-// Placeholder for your separate enable logic
-// const enableExtension = (enabled: boolean) => {
-//   // You can control your extension here manually, e.g.:
-//   // chrome.runtime.sendMessage({ type: "EXT_ENABLED_CHANGED", enabled });
-//   console.log(`Extension ${enabled ? "enabled" : "disabled"}`);
-// };
 
 // Load saved speeds
 const load = async (): Promise<void> => {
@@ -73,19 +66,12 @@ const resetToDefaults = (): void => {
 // Event listeners
 fastSlider?.addEventListener("input", updateLabels);
 slowSlider?.addEventListener("input", updateLabels);
-saveBtn?.addEventListener("click", save);
+// Auto save
+fastSlider?.addEventListener("change", () => void save());
+slowSlider?.addEventListener("change", () => void save());
+
+// saveBtn?.addEventListener("click", save);
 resetBtn?.addEventListener("click", resetToDefaults);
-
-// // Proper toggle event name is "change", not "changed"
-// enableToggle?.addEventListener("change", () => {
-//   enableExtension(enableToggle.checked);
-// });
-
-// Auto-save when popup hides
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") void save();
-});
-window.addEventListener("blur", () => void save());
 
 // Load initial settings
 void load();
