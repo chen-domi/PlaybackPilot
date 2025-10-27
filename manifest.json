@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Slowdown Bar",
+  "name": "Playback Pilot",
   "version": "0.1.0",
   "description": "Hold Space to temporarily slow YouTube playback.",
   "permissions": ["storage"],
