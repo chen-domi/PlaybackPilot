@@ -1,22 +1,24 @@
 {
-  "manifest_version": 3,
-  "name": "Playback Pilot",
-  "version": "0.1.0",
-  "description": "Hold Space to temporarily slow YouTube playback.",
-  "permissions": ["storage"],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://www.youtube.com/*",
-        "https://www.youtube.com/embed/*"
-      ],
-      "js": ["dist/content.js"],
-      "run_at": "document_start",
-      "all_frames": true
+    "manifest_version": 3,
+    "name": "Playback Pilot",
+    "version": "0.1.0",
+    "description": "Set default speed to a fast speed and hold down the spacebar to slow down when you really need to focus on the video/lecture.",
+    "permissions": ["storage"],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.youtube.com/*",
+                "https://www.youtube.com/embed/*",
+                "https://*.khanacademy.org/*",
+                "*://*/Panopto/Pages/Viewer.aspx*"
+            ],
+            "js": ["dist/content.js"],
+            "run_at": "document_start",
+            "all_frames": true
+        }
+    ],
+    "action": {
+        "default_title": "Playback Pilot",
+        "default_popup": "options.html"
     }
-  ],
-  "action": {
-    "default_title": "Slowdown Bar",
-    "default_popup": "options.html"
-  }
 }

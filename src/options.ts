@@ -10,7 +10,6 @@ const fastSlider = document.getElementById("fast-slider") as HTMLInputElement | 
 const slowSlider = document.getElementById("slow-slider") as HTMLInputElement | null;
 const fastLabel = document.getElementById("fast-label") as HTMLElement | null;
 const slowLabel = document.getElementById("slow-label") as HTMLElement | null;
-// const saveBtn = document.getElementById("save-btn") as HTMLButtonElement | null;
 const resetBtn = document.getElementById("reset-btn") as HTMLButtonElement | null;
 // const enableToggle = document.getElementById("enable-toggle") as HTMLInputElement | null;
 
