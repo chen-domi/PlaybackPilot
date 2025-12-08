@@ -1,5 +1,6 @@
 Slowdown Bar
 A browser extension that lets you control video playback speed by holding the spacebar.
+Link: https://chromewebstore.google.com/detail/ccfdkjpddopjahghmipgacfcheamdebi?utm_source=item-share-cb
 Features
 
 Set a Default Speed for normal video playback (0.25x - 4.0x)
