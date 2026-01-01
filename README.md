@@ -1,44 +1,73 @@
-Slowdown Bar
-A browser extension that lets you control video playback speed by holding the spacebar.
-Link: https://chromewebstore.google.com/detail/ccfdkjpddopjahghmipgacfcheamdebi?utm_source=item-share-cb
+# React + TypeScript + Vite
 
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Features
+Currently, two official plugins are available:
 
-Set a Default Speed for normal video playback (0.25x - 4.0x)
-Set a Spacebar Speed for when you hold the spacebar (0.25x - 4.0x)
-Instantly switch between speeds with a simple spacebar hold
-Works on most video streaming platforms
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## How It Works
+## React Compiler
 
-Video plays at Default Speed - Your videos play at your configured default speed
-Hold spacebar → switches to Spacebar Speed - Instantly slow down or speed up
-Release spacebar → returns to Default Speed - Immediately returns to normal playback
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Use Cases
+## Expanding the ESLint configuration
 
-- Fast learners: Watch lectures at 2x speed, hold spacebar to slow down for important concepts
-- Language learning: Speed through easy parts, slow down for difficult pronunciation
-- Code tutorials: Breeze through setup, slow down for complex code explanations
-- Sports analysis: Watch games at normal speed, slow down key plays
-- Music practice: Learn songs at full speed, slow down tricky sections
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## Usage
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-Click the extension icon to open settings
-Adjust your Default Speed slider (how fast videos normally play)
-Adjust your Spacebar Speed slider (speed when holding spacebar)
-Click "Save Settings"
-Navigate to any video and hold spacebar to control playback!
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## Technologies
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-HTML/CSS with Tailwind CSS
-TypeScript
-Vite
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-
-<img width="399" height="598" alt="image" src="https://github.com/user-attachments/assets/fd5bc821-45a1-4ef4-b0ae-c93df18b6f1b" />
-
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
