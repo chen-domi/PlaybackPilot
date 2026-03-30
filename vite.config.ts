@@ -1,20 +1,17 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'path'
 
-import { defineConfig } from "vite";
-import tailwindcss from "@tailwindcss/vite";
-
+// Popup build (React UI for the extension's action popup)
 export default defineConfig({
-  plugins: [tailwindcss()],
+  base: './',
+  plugins: [react(), tailwindcss()],
   build: {
-    outDir: "dist",
+    outDir: 'dist',
+    emptyOutDir: true,
     rollupOptions: {
-      input: {
-        options: "src/options.ts",
-        content: "src/content.ts"
-      },
-      output: {
-        entryFileNames: "[name].js",
-        assetFileNames: "assets/[name][extname]"
-      }
-    }
-  }
-});
+      input: { index: resolve(__dirname, 'index.html') },
+    },
+  },
+})
