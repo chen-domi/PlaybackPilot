@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "PlaybackPilot",
+  "version": "1.0.0",
+  "description": "Lock video speed and use shortcuts to control HTML5 video on YouTube, Panopto, and more.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "PlaybackPilot"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
