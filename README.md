@@ -3,6 +3,9 @@ PlaybackPilot
 
 PlaybackPilot is a modern Chrome extension built with **React**, **TypeScript**, and **Vite**, designed to enhance your media‑watching experience. Whether you're navigating long videos, reviewing lectures, or analyzing audio content, PlaybackPilot gives you intuitive tools to control playback with precision.
 
+Motivation
+As a student, I found Panopto's default player frustrating to use — it lacked the intuitive playback controls I was used to from YouTube. When watching lectures at 2x speed, there was no easy way to slow down on the fly when something didn't click, forcing me to break focus just to adjust settings. PlaybackPilot is my solution.
+
 ---
 
 ## 🚀 Features
