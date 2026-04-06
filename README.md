@@ -34,5 +34,6 @@ As a student, I found Panopto's default player frustrating to use — it lacked 
 | Linting | ESLint (with recommended TS + React configs) |
 | Extension Format | Chrome Manifest V3 |
 
-<img width="294" height="456" alt="image" src="https://github.com/user-attachments/assets/24740eac-8775-420a-82f5-117a454daccc" />
+<img width="286" height="448" alt="image" src="https://github.com/user-attachments/assets/6b9e2830-cbb7-4626-879b-2e68d453a69b" />
+
 <img width="288" height="451" alt="image" src="https://github.com/user-attachments/assets/04551c35-3a71-4bd8-8960-205a88e926fd" />
